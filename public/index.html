@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Treat</title>
+</head>
+<body>
+<h1> Animals </h1>
+<table border = "1" id="animals"></table>
+<div id="pagination"></div>
+<script>
+    function httpGet(theUrl) {
+        const xmlHttp = new XMLHttpRequest();
+        xmlHttp.open("GET", theUrl, false);
+        xmlHttp.send(null);
+        return JSON.parse(xmlHttp.responseText);
+    }
+
+    window.addEventListener('load', () => {
+        const { data: { animals } } = httpGet('http://localhost:3001/api/animals');
+
+        if (animals?.length) {
+            const table = document.getElementById('animals');
+
+            table.innerHTML = '' +
+                '<tr>' +
+                '<th>Image</th>' +
+                '<th>Name</th>' +
+                '<th>Age</th>' +
+                '<th>Gender</th>' +
+                '<th>Status</th>' +
+                '<th>Location</th>' +
+                '</tr>';
+
+            for (const animal of animals) {
+                const tableRow = document.createElement('tr');
+                tableRow.innerHTML = `<td>${animal.photos.length ? `<img src="${animal.photos[0].small}" />` : '-'}</td>
+                                      <td><a href="/animal/${animal.id}">${animal.name || '-'}</a></td>
+                                      <td>${animal.age || '-'}</td>
+                                      <td>${animal.gender || '-'}</td>
+                                      <td>${animal.status || '-'}</td>
+                                      <td>${animal.contact?.address?.country || '-'}</td>`;
+                table.appendChild(tableRow);
+            }
+        }
+    });
+</script>
+</body>
+</html>

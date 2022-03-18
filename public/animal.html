@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Treat</title>
+</head>
+<body>
+<h1></h1>
+<div id="animal-content"></div>
+<script>
+    function httpGet(theUrl) {
+        const xmlHttp = new XMLHttpRequest();
+        xmlHttp.open("GET", theUrl, false);
+        xmlHttp.send(null);
+        return JSON.parse(xmlHttp.responseText);
+    }
+
+    window.addEventListener('load', () => {
+
+        const url = window.location.pathname;
+        const animalId = url.substring(url.lastIndexOf('/') + 1);
+
+        if (animalId) {
+            const { data: animal } = httpGet(`http://localhost:3001/api/animals/${animalId}`);
+
+            if (animal) {
+                const content = document.getElementById('animal-content');
+                const heading = document.getElementsByTagName('h1')[0];
+                heading.innerText = `${animal.name}`;
+
+                content.innerHTML = `
+                    <div>Organization ID: ${animal.organization_id || '-'}</div>
+                    <div>Organization Name: ${animal.organization_name || '-'}</div>
+                    <div>Address 1: ${animal.organization_location?.address1 || '-'}</div>
+                    <div>Address 2: ${animal.organization_location?.address2 || '-'}</div>
+                    <div>City: ${animal.organization_location?.city || '-'}</div>
+                    <div>State: ${animal.organization_location?.state || '-'}</div>
+                    <div>Postcode: ${animal.organization_location?.postcode || '-'}</div>
+                    <div>Country: ${animal.organization_location?.country || '-'}</div>`;
+            }
+        }
+    });
+</script>
+</body>
+</html>
